@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
-
 resource "aws_ecs_cluster" "observability_cluster_fargate" {
   name = "observability-cluster-fargate"
 }
@@ -59,10 +55,37 @@ resource "aws_ecs_service" "observability_servico_fargate" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets = [aws_subnet.minha_subnet_1.id, aws_subnet.minha_subnet_2.id]
+    subnets = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
     assign_public_ip = true
     security_groups = [aws_security_group.meu_grupo_de_seguranca.id]
   }
 
   desired_count = 1
+}
+
+
+resource "aws_security_group" "meu_grupo_de_seguranca" {
+  name        = "grupodesegurancaecs"
+  description = "Security Group para o servico ECS Fargate"
+  vpc_id      = aws_vpc.observability_vpc.id # Substitua pelo ID do seu VPC
+
+  # Regra de entrada: Permitir tráfego HTTP (porta 80) de qualquer lugar
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Regra de saída: Permitir todo o tráfego de saída
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "meu-grupo-de-seguranca-ecs"
+  }
 }

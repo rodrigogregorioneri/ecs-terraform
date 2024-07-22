@@ -28,8 +28,8 @@ resource "aws_subnet" "public_subnet_2" {
 }
 
 resource "aws_security_group" "observability_grupo_de_seguranca" {
-  name        = "observability_grupo_de_seguranca"
-  description = "Grupo de segurança para o serviço Fargate"
+  name        = "observability"
+  description = "Grupo de seguranca para o servico Fargate"
   vpc_id      = aws_vpc.observability_vpc.id
 
   ingress {
